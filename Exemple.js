@@ -1,117 +1,96 @@
-class Personnage {
-  constructor(pseudo, classe, sante, attaque) {
-    this.pseudo = pseudo;
-    this.classe = classe;
-    this.sante = sante;
-    this.attaque = attaque;
-    this.niveau = 1;
-  }
+// GET recevoir données-----------------------------------------------------------------------------------
 
-  get informations() {
-    return (
-      this.pseudo +
-      " " +
-      this.classe +
-      " a " +
-      this.sante +
-      " point de vie et est au niveau " +
-      this.niveau
-    );
-  }
+// const url = "https://blockchain.info/ticker";
 
-  evoluer() {
-    this.niveau += 1;
-    console.log(this.pseudo + " passe au niveau " + this.niveau + " ! ");
-  }
+// function recupererPrix() {
+//     // créer REQUETE
+//     let requete = new XMLHttpRequest();
+//     requete.open("GET", url); // Premier paramètre : GET / POST, Deuxieme paramètre : URL
 
-  verifierSante() {
-    if (this.sante <= 0) {
-      this.sante = 0;
-      console.log(this.pseudo + " a perdu ! bouhh");
-    }
-  }
+//     requete.responseType = "json"; // On attends du JSON
+//     requete.send(); // Envoi de la requête
+
+//     // Quand on recoit une réponse, cette fonction est excecutée
+
+//     requete.onload = function() {
+//         if (requete.readyState === XMLHttpRequest.DONE) {
+//             if (requete.status === 200) {
+//                 let reponse = requete.response; // on stock la reponse
+//                 let prixEnEuros = reponse.EUR.last;
+//                 document.querySelector("#price_label").textContent = prixEnEuros;
+//             } else {
+//                 alert("un problème est intervenu, merci de revenir plus tard");
+//             }
+//         }
+//     };
+//     console.log("prix actualise");
+// }
+// setInterval(recupererPrix, 1000);
+
+// POST envoyer données---------------------------------------------------------------------------------------
+// const url = "https://lesoublisdelinfo.com/api.php";
+
+// let requete = new XMLHttpRequest();
+
+// // GET
+// // requete.open("GET", url);
+// // requete.responseType = "json";
+// // requete.send();
+
+// // Post
+// requete.open("POST", url);
+// requete.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+// requete.responsetype = "json";
+// requete.send("prenom=samsampanda");
+
+// requete.onload = function() {
+//     if (requete.readyState === XMLHttpRequest.DONE) {
+//         if (requete.status === 200) {
+//             let reponse = requete.response; // on stock la reponse
+//             console.log(reponse);
+//         } else {
+//             alert("un problème est intervenu, merci de revenir plus tard");
+//         }
+//     }
+// };
+
+// Quand on recoit une réponse, cette fonction est excecutée
+
+// APPLI METEO
+
+let ville = "Paris";
+recevoirTemperature(ville);
+
+let changerVille = document.querySelector("#changer");
+
+changerVille.addEventListener("click", () => {
+    ville = prompt("Choississez la nouvelle ville");
+    recevoirTemperature(ville);
+    console.log(ville);
+});
+
+function recevoirTemperature(ville) {
+    const url =
+        "https://api.openweathermap.org/data/2.5/weather?q=" +
+        ville +
+        "&appid=6d6cca6d2744d8c021baf01ab2a7d59e&units=metric";
+    let requete = new XMLHttpRequest();
+
+    requete.open("GET", url);
+    requete.responseType = "json";
+    requete.send();
+
+    requete.onload = function() {
+        if (requete.readyState === XMLHttpRequest.DONE) {
+            if (requete.status === 200) {
+                let reponse = requete.response; // on stock la reponse
+                let temperature = reponse.main.temp;
+
+                document.querySelector("#temperature_label").textContent = temperature;
+                document.querySelector("#ville").textContent = ville;
+            } else {
+                alert("un problème est intervenu, merci de revenir plus tard");
+            }
+        }
+    };
 }
-
-class Magicien extends Personnage {
-  constructor(pseudo) {
-    super(pseudo, "magicien", 170, 90);
-  }
-
-  attaquer(personnage) {
-    personnage.sante -= this.attaque;
-
-    console.log(
-      this.pseudo +
-        " attaque " +
-        personnage.pseudo +
-        " en lancant un sort ( " +
-        this.attaque +
-        " degats )"
-    );
-    this.evoluer();
-    personnage.verifierSante();
-  }
-
-  coupSpecial(personnage) {
-    personnage.sante -= this.attaque * 5;
-    console.log(
-      this.pseudo +
-        " attaque " +
-        personnage.pseudo +
-        " en lancant un coup special ( " +
-        this.attaque * 5 +
-        " degats )"
-    );
-
-    this.evoluer();
-    personnage.verifierSante();
-  }
-}
-
-// var personnage1 = new Magicien("samsampanda");
-// console.log(personnage1);
-
-class Guerrier extends Personnage {
-  constructor(pseudo) {
-    super(pseudo, "guerrier", 350, 50);
-  }
-
-  attaquer(personnage) {
-    personnage.sante -= this.attaque;
-    console.log(
-      this.pseudo +
-        " attaque " +
-        personnage.pseudo +
-        " en lancant un sort ( " +
-        this.attaque +
-        " degats )"
-    );
-    this.evoluer();
-    personnage.verifierSante();
-  }
-
-  coupSpecial(personnage) {
-    personnage.sante -= this.attaque * 5;
-    console.log(
-      this.pseudo +
-        " attaque " +
-        personnage.pseudo +
-        " en lancant un coup special ( " +
-        this.attaque * 5 +
-        " degats )"
-    );
-
-    this.evoluer();
-    personnage.verifierSante();
-  }
-}
-
-var gandalf = new Magicien("Gandalf");
-var thor = new Guerrier("Thor");
-console.log(thor.informations);
-console.log(gandalf.informations);
-gandalf.attaquer(thor);
-console.log(thor.informations);
-thor.attaquer(gandalf);
-console.log(gandalf.informations);
-thor.coupSpecial(gandalf);
